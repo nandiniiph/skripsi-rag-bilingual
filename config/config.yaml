@@ -1,0 +1,70 @@
+project:
+  name: skripsi_nandini
+  seed: 42
+paths:
+  raw_csv: data/raw/medquad.csv
+  dataset_analysis_json: outputs/auto_language_v2/evaluation/dataset_analysis.json
+  focus_distribution_csv: outputs/auto_language_v2/evaluation/focus_area_distribution.csv
+  artifact_candidates_csv: data/manual_review/artifact_candidates.csv
+  cleaned_qa_en_csv: data/processed/qa_pairs_en.csv
+  chunks_en_csv: data/processed/chunks_en.csv
+  qa_id_csv: data/bilingual/qa_pairs_id.csv
+  chunks_id_csv: data/bilingual/chunks_id.csv
+  translation_issues_csv: data/manual_review/translation_auto_issues.csv
+  translation_review_csv: data/manual_review/translation_review_200_chunks.csv
+  kb_en_csv: data/knowledge_base/knowledge_base_en.csv
+  kb_id_csv: data/knowledge_base/knowledge_base_id.csv
+  qa_sample_en_csv: data/evaluation/qa_sample_en.csv
+  gt_annotation_csv: data/manual_review/ground_truth_annotation.csv
+  qa_evaluation_csv: data/evaluation/qa_evaluation.csv
+  eval_translation_review_csv: data/manual_review/final_evaluation_translation_review.csv
+  retrieval_dir: outputs/auto_language_v2/retrieval
+  generation_csv: outputs/auto_language_v2/generation/generated_answers.csv
+  retrieval_per_query_csv: outputs/auto_language_v2/evaluation/retrieval_per_query.csv
+  retrieval_summary_csv: outputs/auto_language_v2/evaluation/retrieval_summary.csv
+  generation_per_query_csv: outputs/auto_language_v2/evaluation/generation_per_query.csv
+  final_results_csv: outputs/auto_language_v2/evaluation/final_results.csv
+  log_file: outputs/auto_language_v2/logs/pipeline.log
+  index_dir: indexes/auto_language_v2
+models:
+  chunk_tokenizer: intfloat/multilingual-e5-base
+  translation: facebook/nllb-200-distilled-600M
+  embedding: intfloat/multilingual-e5-base
+  reranker: BAAI/bge-reranker-v2-m3
+  generator: sail/Sailor2-1B-Chat
+  bertscore: xlm-roberta-base
+preprocessing:
+  chunk_size: 256
+  chunk_overlap: 64
+  translation_review_sample: 200
+translation:
+  source_lang: eng_Latn
+  target_lang: ind_Latn
+  batch_size: 16
+  max_input_tokens: 512
+  checkpoint_every: 250
+experiment:
+  evaluation_pairs: 300
+  bm25_top_n: 50
+  dense_top_n: 50
+  rrf_k: 60
+  rrf_candidate_top_n: 10
+  reranker_batch_size: 8
+  reranker_max_length: 512
+  top_k_evidence: 3
+  max_new_tokens: 256
+  do_sample: false
+  embedding_batch_size: 32
+  generation_batch_size: 1
+language_detection:
+  backend: langid
+  candidate_languages:
+  - id
+  - en
+evaluation:
+  mrr_cutoff: 50
+  bertscore_num_layers: 9
+  bertscore_idf: false
+  bertscore_rescale_with_baseline: false
+  statistical_unit: source_answer
+  holm_family: three_scenario_pairs_per_metric_per_language
